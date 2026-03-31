@@ -8,6 +8,24 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
+
+<!-- 登录验证模态框 -->
+<div id="login-modal" class="login-modal">
+    <div class="login-container">
+        <h2 class="login-title">🔐 需验证后访问</h2>
+        <p class="login-desc">请输入用户名和密码</p>
+        <div class="input-group">
+            <input type="text" id="username" placeholder="用户名" autocomplete="off" spellcheck="false">
+        </div>
+        <div class="input-group">
+            <input type="password" id="password" placeholder="密码">
+        </div>
+        <p class="login-desc">熔断时间：用户名12:00；密码18:00。<br>此时间后将公布答案。</p>
+        <button id="login-btn" class="login-btn">进入</button>
+        <p id="login-error" class="login-error"></p>
+    </div>
+</div>
+
 <!-- 烟花粒子容器 -->
 <div id="fireworks"></div>
 

@@ -1,5 +1,83 @@
+const VALID_USERNAME = "tibbar"; //rabbit
+const VALID_PASSWORD = "0401"; //
+
+// 验证相关函数
+function checkAuthStatus() {
+    return localStorage.getItem("birthday_auth") === "true";
+}
+
+function setAuthStatus(authenticated) {
+    if (authenticated) {
+        localStorage.setItem("birthday_auth", "true");
+    } else {
+        localStorage.removeItem("birthday_auth");
+    }
+}
+
+function showLoginModal() {
+    const modal = document.getElementById("login-modal");
+    if (modal) modal.style.display = "flex";
+}
+
+function hideLoginModal() {
+    const modal = document.getElementById("login-modal");
+    if (modal) modal.style.display = "none";
+}
+
+function initAuth() {
+    //如果已认证，直接隐藏模态框
+    if (checkAuthStatus()) {
+        hideLoginModal();
+        return;
+    }
+
+    // 未认证：显示模态框并绑定事件
+    showLoginModal();
+
+    const loginBtn = document.getElementById("login-btn");
+    const usernameInput = document.getElementById("username");
+    const passwordInput = document.getElementById("password");
+    const errorMsg = document.getElementById("login-error");
+
+    // 限制输入只允许字母和数字
+    function restrictAlphaNum(e) {
+        this.value = this.value.replace(/[^a-zA-Z0-9]/g, '');
+    }
+    if (usernameInput) usernameInput.addEventListener("input", restrictAlphaNum);
+    if (passwordInput) passwordInput.addEventListener("input", restrictAlphaNum);
+
+    function handleLogin() {
+        const username = usernameInput ? usernameInput.value : "";
+        const password = passwordInput ? passwordInput.value : "";
+
+        if (username === VALID_USERNAME && password === VALID_PASSWORD) {
+            setAuthStatus(true);
+            hideLoginModal();
+            errorMsg.textContent = "";
+        } else {
+            errorMsg.textContent = "用户名或密码错误";
+            // 清空密码框
+            if (passwordInput) passwordInput.value = "";
+        }
+    }
+
+    if (loginBtn) {
+        loginBtn.addEventListener("click", handleLogin);
+    }
+
+    // 支持回车登录
+    const handleEnter = (e) => {
+        if (e.key === "Enter") handleLogin();
+    };
+    if (usernameInput) usernameInput.addEventListener("keypress", handleEnter);
+    if (passwordInput) passwordInput.addEventListener("keypress", handleEnter);
+}
+
+
 // 页面切换功能
 document.addEventListener('DOMContentLoaded', function() {
+    // 初始化认证系统
+    initAuth();
     // 初始化粒子效果
     initParticles();
     // 初始化烟花粒子效果（仅在首页显示）
