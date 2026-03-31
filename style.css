@@ -560,7 +560,7 @@ body {
     width: 100%;
     height: 100%;
     background-color: rgba(0, 0, 0, 0.75);
-    backdrop-filter: blur(8px);
+    backdrop-filter: blur(30px);
     z-index: 2000;
     display: flex;
     align-items: center;
@@ -577,6 +577,10 @@ body {
     max-width: 380px;
     text-align: center;
     border: 1px solid rgba(184, 134, 94, 0.3);
+    max-height: 90vh;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
 }
 
 .login-title {
@@ -648,6 +652,9 @@ body {
     color: #b8865e;
     text-align: center;
     font-weight: 500;
+    word-wrap: break-word;
+    white-space: normal;
+    max-width: 100%;
 }
 
 /* 步骤切换容器 */
