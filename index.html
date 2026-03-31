@@ -9,19 +9,27 @@
 </head>
 <body>
 
-<!-- 登录验证模态框 -->
+<!-- 登录验证模态框（两步验证） -->
 <div id="login-modal" class="login-modal">
     <div class="login-container">
-        <h2 class="login-title">🔐 需验证后访问</h2>
-        <p class="login-desc">请输入用户名和密码</p>
-        <div class="input-group">
-            <input type="text" id="username" placeholder="用户名" autocomplete="off" spellcheck="false">
+        <h2 class="login-title">🔐 需要验证访问</h2>
+        <div id="login-message" class="login-message"></div>
+
+        <!-- 第一步：用户名输入 -->
+        <div id="step-username" class="login-step">
+            <div class="input-group">
+                <input type="text" id="username" placeholder="用户名，6位，字母" autocomplete="off" spellcheck="false">
+            </div>
         </div>
-        <div class="input-group">
-            <input type="password" id="password" placeholder="密码">
+
+        <!-- 第二步：密码输入（初始隐藏） -->
+        <div id="step-password" class="login-step" style="display: none;">
+            <div class="input-group">
+                <input type="password" id="password" placeholder="密码，7位，数字">
+            </div>
         </div>
-        <p class="login-desc">熔断时间：用户名12:00；密码18:00。<br>此时间后将公布答案。</p>
-        <button id="login-btn" class="login-btn">进入</button>
+
+        <button id="login-btn" class="login-btn">下一步</button>
         <p id="login-error" class="login-error"></p>
     </div>
 </div>
@@ -52,7 +60,7 @@
             <span>乐</span>
         </div>
 
-        <div class="subtitle">✨ 愿这一天充满美好 ✨</div>
+        <div class="subtitle">✨ 愿这一天充满美好回忆 ✨</div>
 
         <div class="floating-elements">
             <!-- 浮动装饰元素 -->

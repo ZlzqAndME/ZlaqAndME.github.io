@@ -1,7 +1,9 @@
-const VALID_USERNAME = "tibbar"; //rabbit
-const VALID_PASSWORD = "0401"; //
+const VALID_USERNAME = "tibbar";
+const VALID_PASSWORD = "3411125";
 
-// 验证相关函数
+// 验证相关函数（两步验证）
+let authStep = 1; // 1: 用户名, 2: 密码
+
 function checkAuthStatus() {
     return localStorage.getItem("birthday_auth") === "true";
 }
@@ -17,6 +19,7 @@ function setAuthStatus(authenticated) {
 function showLoginModal() {
     const modal = document.getElementById("login-modal");
     if (modal) modal.style.display = "flex";
+    resetToStep1(); // 每次显示模态框重置到第一步
 }
 
 function hideLoginModal() {
@@ -24,14 +27,59 @@ function hideLoginModal() {
     if (modal) modal.style.display = "none";
 }
 
+// 重置到用户名步骤
+function resetToStep1() {
+    authStep = 1;
+    const stepUsername = document.getElementById("step-username");
+    const stepPassword = document.getElementById("step-password");
+    const loginBtn = document.getElementById("login-btn");
+    const errorMsg = document.getElementById("login-error");
+    const messageDiv = document.getElementById("login-message");
+    const usernameInput = document.getElementById("username");
+    const passwordInput = document.getElementById("password");
+
+    if (stepUsername) stepUsername.style.display = "block";
+    if (stepPassword) stepPassword.style.display = "none";
+    if (loginBtn) loginBtn.textContent = "下一步";
+    if (errorMsg) errorMsg.textContent = "";
+    if (messageDiv) messageDiv.innerHTML = "每一件收到的物品都可能是提示哦";
+    if (usernameInput) usernameInput.value = "";
+    if (passwordInput) passwordInput.value = "";
+}
+
+// 切换到密码步骤
+function goToStep2() {
+    authStep = 2;
+    const stepUsername = document.getElementById("step-username");
+    const stepPassword = document.getElementById("step-password");
+    const loginBtn = document.getElementById("login-btn");
+    const errorMsg = document.getElementById("login-error");
+    const messageDiv = document.getElementById("login-message");
+
+    if (stepUsername) stepUsername.style.display = "none";
+    if (stepPassword) stepPassword.style.display = "block";
+    if (loginBtn) loginBtn.textContent = "登录";
+    if (errorMsg) errorMsg.textContent = "";
+    if (messageDiv) messageDiv.innerHTML = "他做了个梦。那是个思乡的梦。他梦到了一个周日上午，他坐火车回到了家。出站后他坐上了蓝蓝的<b>*号线</b>，<b>*站</b>后到达了一座有名的商场。他在那里吃了饭，打算下午去河边玩。<br>" +
+        "他来到了城市北侧的河，那里的花开得正盛。他在河边吹风散步，不觉到了傍晚。他来到了离河岸的第三站，感叹着日新月异。毕竟这一站曾是<b>*号线</b>一期的终点站。<br>" +
+        "他坐上了这趟回城的地铁。<b>*站</b>后下了车。在一家鲜为人知的小店吃了碗面。<br>" +
+        "吃完晚饭他该走了。他发现不同于来时，<b>*号线</b>能更快的到达车站。<br>" +
+        "幸运的是，这一站恰好是个换乘站。他不用再走去找那一条线了。<br>" +
+        "坐了<b>*站</b>后，他回到了火车站。可是就在进站的那一刻，一股违和感油然而生。这车站似乎比来的时候大得多得多，而且分明的写着南…南…站……<br>" +
+        "他浑然惊醒，才发觉自己睡着了。原来是他在火车上睡着了，还仿佛梦到了今天的行程，却在不同的城市。<br>" +
+        "“列车前方到站：苏州站。前方到站：苏州站。”<br>" +
+        "<a href='https://www.metroman.cn/maps/shijiazhuang/network' target='_blank'>点此提示</a>";
+    // 聚焦密码输入框
+    const passwordInput = document.getElementById("password");
+    if (passwordInput) setTimeout(() => passwordInput.focus(), 50);
+}
+
 function initAuth() {
-    //如果已认证，直接隐藏模态框
     if (checkAuthStatus()) {
         hideLoginModal();
         return;
     }
 
-    // 未认证：显示模态框并绑定事件
     showLoginModal();
 
     const loginBtn = document.getElementById("login-btn");
@@ -46,28 +94,34 @@ function initAuth() {
     if (usernameInput) usernameInput.addEventListener("input", restrictAlphaNum);
     if (passwordInput) passwordInput.addEventListener("input", restrictAlphaNum);
 
-    function handleLogin() {
-        const username = usernameInput ? usernameInput.value : "";
-        const password = passwordInput ? passwordInput.value : "";
-
-        if (username === VALID_USERNAME && password === VALID_PASSWORD) {
-            setAuthStatus(true);
-            hideLoginModal();
-            errorMsg.textContent = "";
-        } else {
-            errorMsg.textContent = "用户名或密码错误";
-            // 清空密码框
-            if (passwordInput) passwordInput.value = "";
+    function handleStep() {
+        if (authStep === 1) {
+            const username = usernameInput ? usernameInput.value : "";
+            if (username === VALID_USERNAME) {
+                goToStep2();
+            } else {
+                errorMsg.textContent = "用户名错误";
+                if (usernameInput) usernameInput.value = "";
+            }
+        } else if (authStep === 2) {
+            const password = passwordInput ? passwordInput.value : "";
+            if (password === VALID_PASSWORD) {
+                setAuthStatus(true);
+                hideLoginModal();
+            } else {
+                errorMsg.textContent = "密码错误";
+                if (passwordInput) passwordInput.value = "";
+            }
         }
     }
 
     if (loginBtn) {
-        loginBtn.addEventListener("click", handleLogin);
+        loginBtn.addEventListener("click", handleStep);
     }
 
-    // 支持回车登录
+    // 支持回车
     const handleEnter = (e) => {
-        if (e.key === "Enter") handleLogin();
+        if (e.key === "Enter") handleStep();
     };
     if (usernameInput) usernameInput.addEventListener("keypress", handleEnter);
     if (passwordInput) passwordInput.addEventListener("keypress", handleEnter);
